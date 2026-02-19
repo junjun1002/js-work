@@ -5,4 +5,6 @@ const users = [
   { id: 4, name: "Yuki", coin: 1200, level: 20, lastLoginDaysAgo: 40, items: ["shield"] },
 ];
 
+export default users;
+
 console.log("users:", users);
