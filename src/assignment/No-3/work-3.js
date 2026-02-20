@@ -1,11 +1,16 @@
-import users from "../No-0/work-0.js";
-
-const results = users.map((user) => {
-  return {
-    ...user,
-    coin: user.coin + 100
-  };
-});
-
-console.log("元のusers:", users);
-console.log("100コイン加算後:", results);
+/**
+ * 全ユーザーに指定されたコインを加算する関数
+ * @param {Array} users - ユーザーデータの配列
+ * @param {number} coinsToAdd - 加算するコインの数
+ * @returns {Array} コインを加算した後のユーザーデータの配列
+ */
+export function addCoinsToUsers(users, coinsToAdd) {
+  // ユーザーデータをループしてコインを加算する
+  const results = users.map((user) => {
+    return {
+      ...user,
+      coin: user.coin + coinsToAdd
+    };
+  });
+  return results;
+}

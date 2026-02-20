@@ -1,7 +1,11 @@
-import users from "../No-0/work-0.js";
-
- // 指定されたユーザーにコインを加算する関数
-function rewardUser(users, userId, amount) {
+/**
+ * 指定されたユーザーにコインを加算する関数
+ * @param {Array} users - ユーザーデータの配列
+ * @param {number} userId - コインを加算するユーザーのID
+ * @param {number} amount - 加算するコインの数
+ * @returns {Array} コインを加算した後のユーザーデータの配列
+ */
+export function rewardUser(users, userId, amount) {
     // ユーザーが見つかったかどうかを追跡するフラグ
     let found = false;
 
@@ -25,12 +29,4 @@ function rewardUser(users, userId, amount) {
     }
 
     return updatedUsers;
-}
-
-// ユーザー に 500 コインを加算する例
-try {
-  const updated = rewardUser(users, 2, 500);
-  console.log(updated);
-} catch (error) {
-  console.error(error.message);
 }
