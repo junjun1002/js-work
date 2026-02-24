@@ -29,3 +29,8 @@ try {
 } catch (error) {
     console.error(error.message);
 }
+
+// 課題5: 集計する（reduce / object）
+import { aggregateByLevelRange } from "./No-5/work-5.js";
+const levelRangeAggregation = aggregateByLevelRange(users);
+console.log("レベル範囲ごとのユーザー数:", levelRangeAggregation);
