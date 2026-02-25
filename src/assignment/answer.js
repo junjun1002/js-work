@@ -34,3 +34,8 @@ try {
 import { aggregateByLevelRange } from "./No-5/work-5.js";
 const levelRangeAggregation = aggregateByLevelRange(users);
 console.log("レベル範囲ごとのユーザー数:", levelRangeAggregation);
+
+// 課題6: 配列の中の配列を扱う（items集計）
+import { aggregateItems } from "./No-6/work-6.js";
+const itemAggregation = aggregateItems(users);
+console.log("全ユーザーのアイテム集計 :", itemAggregation);
