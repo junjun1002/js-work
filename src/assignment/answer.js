@@ -39,3 +39,14 @@ console.log("レベル範囲ごとのユーザー数:", levelRangeAggregation);
 import { aggregateItems } from "./No-6/work-6.js";
 const itemAggregation = aggregateItems(users);
 console.log("全ユーザーのアイテム集計 :", itemAggregation);
+
+// 課題7: 非同期の入口（Promise / async-await）
+import { waitForPromise } from "./No-7/work-7.js";
+const ms = 500; // 待機時間をミリ秒で指定
+console.log("start");
+console.log(`${ms}ms待つ`);
+await waitForPromise(ms);
+console.log(`after ${ms}ms`);
+console.log(`さらに${ms}ms待つ`);
+await waitForPromise(ms);
+console.log("done");
