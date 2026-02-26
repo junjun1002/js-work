@@ -10,12 +10,13 @@ console.log("コインの合計:", calculateTotalCoins(users));
 
 // 課題2: 条件に合うユーザーをフィルタリングして表示する
 import { getFilteredUsers } from "./No-2/work-2.js";
-const filteredUsers = getFilteredUsers(users, user => user.coin > 100);
+const filteredUsers = getFilteredUsers(users, user => user.coin >= 100);
 console.log("フィルタリングされたユーザー:", filteredUsers);
 
 // 課題3: データ変換(map)を使用して全ユーザーにコインを加算する
 import { addCoinsToUsers } from "./No-3/work-3.js";
 const updatedUsers = addCoinsToUsers(users, 100);
+console.log("コイン加算前のユーザー:", users);
 console.log("コイン加算後のユーザー:", updatedUsers);
 
 // 課題4: データを検索して更新する(findを使用して特定のユーザーにコインを加算する)
@@ -53,5 +54,6 @@ console.log("done");
 
 // ボーナス課題: ミニ運営っぽい問題
  import { updateDormantUsers } from "./Ex/bonus.js";
- const updatedDormantUsers = updateDormantUsers(users);
+ const { updatedUsers: updatedDormantUsers, dormantUsersCount } = updateDormantUsers(users);
+ console.log("休眠ユーザーの数:", dormantUsersCount);
  console.log("休眠ユーザーのコインをリセットしたユーザーデータ:", updatedDormantUsers);

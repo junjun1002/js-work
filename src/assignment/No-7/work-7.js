@@ -3,7 +3,7 @@
  * @param {number} ms 待機時間（ミリ秒）
  * @returns {Promise<number>} 待機時間（ミリ秒）を返すPromise
  */
-export function waitForPromise(ms) {
+export async function waitForPromise(ms) {
     // 指定された時間後に解決するPromiseを作成
     const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
