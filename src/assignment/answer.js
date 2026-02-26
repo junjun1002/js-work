@@ -50,3 +50,8 @@ console.log(`after ${ms}ms`);
 console.log(`さらに${ms}ms待つ`);
 await waitForPromise(ms);
 console.log("done");
+
+// ボーナス課題: ミニ運営っぽい問題
+ import { updateDormantUsers } from "./Ex/bonus.js";
+ const updatedDormantUsers = updateDormantUsers(users);
+ console.log("休眠ユーザーのコインをリセットしたユーザーデータ:", updatedDormantUsers);
