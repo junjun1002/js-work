@@ -42,15 +42,20 @@ const itemAggregation = aggregateItems(users);
 console.log("全ユーザーのアイテム集計 :", itemAggregation);
 
 // 課題7: 非同期の入口（Promise / async-await）
-import { waitForPromise } from "./No-7/work-7.js";
-const ms = 500; // 待機時間をミリ秒で指定
-console.log("start");
-console.log(`${ms}ms待つ`);
-await waitForPromise(ms);
-console.log(`after ${ms}ms`);
-console.log(`さらに${ms}ms待つ`);
-await waitForPromise(ms);
-console.log("done");
+import { sleep } from "./No-7/work-7.js";
+
+async function main() {
+  const ms = 500;
+  console.log("start");
+  console.log(`${ms}ms待つ`);
+  await sleep(ms);
+  console.log(`after ${ms}ms`);
+  console.log(`さらに${ms}ms待つ`);
+  await sleep(ms);
+  console.log("done");
+}
+
+await main();
 
 // ボーナス課題: ミニ運営っぽい問題
  import { updateDormantUsers } from "./Ex/bonus.js";
