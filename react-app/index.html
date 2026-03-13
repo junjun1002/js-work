@@ -6,10 +6,22 @@
     <title>React App</title>
   </head>
   <body>
-    <!-- Reactの画面を描画するための土台となる要素 -->
+    <!--
+      このファイルは、ブラウザで最初に開かれるHTMLです。
+      ただし、画面の中身をここへ直接たくさん書くのではなく、
+      React がこのHTMLの中に画面を差し込むための土台として使います。
+    -->
+
+    <!--
+      id="root" は、Reactの画面を表示するための差し込み口です。
+      この中に、あとで main.jsx から App が描画されます。
+    -->
     <div id="root"></div>
 
-    <!-- アプリの開始地点となるmain.jsxを読み込む -->
+    <!--
+      main.jsx はReactアプリの開始地点です。
+      この1行を読むことで、Reactの処理が始まります。
+    -->
     <script type="module" src="/src/app/main.jsx"></script>
   </body>
 </html>
