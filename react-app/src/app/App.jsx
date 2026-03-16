@@ -8,6 +8,9 @@
 
   つまり、「このアプリで何を表示するか」を組み立てる中心のファイルです。
 */
+
+import UserCard from '../features/users/components/UserCard';
+
 export default function App() {
   return (
     <main>
@@ -16,6 +19,9 @@ export default function App() {
 
       {/* 最初の説明文 */}
       <p>Start building from this scaffold.</p>
+
+      <UserCard name="Taro" coin={100} />
+      <UserCard name="Hanako" coin={300} />
     </main>
   );
 }
