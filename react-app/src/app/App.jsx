@@ -20,6 +20,7 @@ export default function App() {
       {/* 最初の説明文 */}
       <p>Start building from this scaffold.</p>
 
+      {/* ユーザーカードを表示するためのコンポーネントを呼び出す */}
       <UserCard name="Taro" coin={100} />
       <UserCard name="Hanako" coin={300} />
     </main>
