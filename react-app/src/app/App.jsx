@@ -11,6 +11,11 @@
 
 import UserCard from '../features/users/components/UserCard';
 
+const users = [
+  {id: 1, name: 'Taro', coin: 100},
+  {id: 2, name: 'Hanako', coin: 300},
+];
+
 export default function App() {
   return (
     <main>
@@ -21,8 +26,9 @@ export default function App() {
       <p>Start building from this scaffold.</p>
 
       {/* ユーザーカードを表示するためのコンポーネントを呼び出す */}
-      <UserCard name="Taro" coin={100} />
-      <UserCard name="Hanako" coin={300} />
+      {users.map(user => (
+        <UserCard key={user.id} name={user.name} coin={user.coin} />
+      ))}
     </main>
   );
 }

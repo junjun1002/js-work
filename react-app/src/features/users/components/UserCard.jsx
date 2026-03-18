@@ -11,7 +11,7 @@ export default function UserCard(props){
     return(
         // ユーザーカードの内容を表示するためのJSX要素
         <div>
-            // ユーザーの名前とコイン数を表示するためのJSX要素
+            {/* ユーザーの名前とコイン数を表示 */}
             <p>name: {props.name}</p>
             <p>coin: {props.coin}</p>
         </div>
