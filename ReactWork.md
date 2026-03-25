@@ -1,190 +1,423 @@
-﻿# ==========================================
-# React 学習（追加インストールなし / CDN版）
+# ==========================================
+# ToDoアプリ 実装手順書
+# React + Node.js + Express
 # ==========================================
 
-## 0. フォルダとファイルを作る
-プロジェクト直下に以下を作成：
+## 0. この手順書で作るもの
+バックエンド未経験者向けに、以下の機能を持つ ToDoアプリを作る。
 
-```
-react-cdn/
-  index.html
-  app.js
+- ToDo一覧を表示する
+- ToDoを追加する
+- ToDoの完了状態を切り替える
+- ToDoを削除する
+
+学習目的として、次の流れを一通り体験する。
+
+- Reactで画面を作る
+- Node.js + ExpressでAPIを作る
+- フロントエンドからAPIを呼ぶ
+- サーバー側でデータを管理する
+
+---
+
+## 1. 先に決める構成
+最初の制作では、難しくしすぎない構成がおすすめ。
+
+### 採用構成
+- フロントエンド: React
+- バックエンド: Node.js + Express
+- データ保存: まずはメモリ保存、慣れたら JSONファイル保存
+
+### フォルダ構成例
+
+```txt
+js/
+  ReactWork.md
+  react-app/
+    src/
+      app/
+        App.jsx
+        main.jsx
+  todo-api/
+    package.json
+    server.js
 ```
 
 ---
 
-## 1. index.html（コピペ）
-`react-cdn/index.html` を作成して、以下を貼り付け：
+## 2. 作る機能を先に整理する
+最初に全部盛りにしないことが大事。
 
-```html
-<!doctype html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>React CDN Practice</title>
-  </head>
-  <body>
-    <div id="root"></div>
+### 最低限の機能
+1. 一覧表示
+2. 追加
+3. 完了切り替え
+4. 削除
 
-    <!-- React / ReactDOM（CDN: 再現性のためバージョン固定） -->
-    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
-
-    <!-- JSXをブラウザで動かすためのBabel（学習用） -->
-    <script src="https://unpkg.com/@babel/standalone@7.24.0/babel.min.js"></script>
-
-    <!-- 自作コード -->
-    <script type="text/babel" src="./app.js"></script>
-  </body>
-</html>
-```
+### 余裕があれば追加する機能
+- 未完了のみ表示
+- 件数表示
+- 入力バリデーション
+- JSONファイルへの保存
 
 ---
 
-## 2. app.js（コピペ）
-`react-cdn/app.js` を作成して、以下を貼り付け：
+## 3. APIの設計を先に決める
+画面より前に、どんな通信をするか決めると実装が楽になる。
 
-```jsx
-function App() {
-  const [count, setCount] = React.useState(0);
+### ToDoデータの形
 
-  return (
-    <div style={{ fontFamily: "sans-serif", padding: 16 }}>
-      <h1>React CDN Practice</h1>
-      <p>count: {count}</p>
-
-      <button onClick={() => setCount(count + 1)}>
-        +1
-      </button>
-
-      <button onClick={() => setCount(0)} style={{ marginLeft: 8 }}>
-        reset
-      </button>
-    </div>
-  );
+```js
+{
+  id: 1,
+  title: "牛乳を買う",
+  completed: false
 }
+```
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+### 作るAPI
+
+#### `GET /todos`
+- ToDo一覧を返す
+
+#### `POST /todos`
+- 新しいToDoを追加する
+
+送るデータ例:
+
+```json
+{
+  "title": "部屋を片付ける"
+}
+```
+
+#### `PATCH /todos/:id`
+- 完了状態を切り替える
+
+送るデータ例:
+
+```json
+{
+  "completed": true
+}
+```
+
+#### `DELETE /todos/:id`
+- 指定したToDoを削除する
+
+---
+
+## 4. 実装のおすすめ順
+この順番で進めると詰まりにくい。
+
+1. Node.js + ExpressでAPIだけ作る
+2. APIをブラウザやツールで確認する
+3. Reactで画面だけ作る
+4. ReactからAPIを呼ぶ
+5. 追加、更新、削除をつなぐ
+6. 見た目を整える
+7. 余裕があれば保存処理を追加する
+
+---
+
+## 5. バックエンド実装手順
+
+## 5-1. バックエンド用フォルダを作る
+プロジェクト直下に `todo-api` を作る。
+
+```txt
+todo-api/
+  package.json
+  server.js
+```
+
+## 5-2. 初期化とインストール
+`todo-api` で以下を実行する。
+
+```powershell
+npm init -y
+npm install express cors
+```
+
+### `express`
+- APIサーバーを作るために使う
+
+### `cors`
+- ReactからNode.jsのAPIを呼べるようにする
+
+## 5-3. 最初のサーバーを作る
+`todo-api/server.js` を作って、まずはサーバー起動だけ確認する。
+
+やること:
+- `express()` を作る
+- `app.use(cors())` を設定する
+- `app.use(express.json())` を設定する
+- `app.listen(3001)` で起動する
+
+確認できる状態:
+- `http://localhost:3001` にアクセスできる
+- ターミナルに起動メッセージが出る
+
+## 5-4. 仮データを作る
+最初はDBなしで、配列で持つ。
+
+例:
+
+```js
+let todos = [
+  { id: 1, title: "買い物に行く", completed: false },
+  { id: 2, title: "課題を進める", completed: true }
+];
+```
+
+## 5-5. 一覧取得APIを作る
+まずは `GET /todos` を実装する。
+
+やること:
+- `app.get("/todos", ...)` を作る
+- `todos` 配列をそのまま返す
+
+確認:
+- ブラウザで `http://localhost:3001/todos` を開く
+- JSONが表示される
+
+## 5-6. 追加APIを作る
+次に `POST /todos` を実装する。
+
+やること:
+- リクエストの `title` を受け取る
+- 空文字ならエラーを返す
+- 新しいToDoを作って配列に追加する
+- 作成したToDoを返す
+
+ポイント:
+- `id` は `Date.now()` か `最大id + 1` で作る
+- `completed` は最初 `false`
+
+## 5-7. 完了切り替えAPIを作る
+`PATCH /todos/:id` を実装する。
+
+やること:
+- URLから `id` を受け取る
+- 対象のToDoを探す
+- `completed` を更新する
+- 更新後のデータを返す
+
+## 5-8. 削除APIを作る
+`DELETE /todos/:id` を実装する。
+
+やること:
+- URLから `id` を受け取る
+- 該当データを配列から削除する
+- 正常終了レスポンスを返す
+
+## 5-9. API完成時の確認項目
+- `GET /todos` で一覧が返る
+- `POST /todos` で新規追加できる
+- `PATCH /todos/:id` で完了切り替えできる
+- `DELETE /todos/:id` で削除できる
+
+---
+
+## 6. フロントエンド実装手順
+
+## 6-1. React側で必要な画面を決める
+今回は1画面で十分。
+
+必要な表示:
+- タイトル
+- 入力欄
+- 追加ボタン
+- ToDo一覧
+- 各ToDoの完了ボタン
+- 各ToDoの削除ボタン
+
+## 6-2. 最初は画面だけ作る
+API接続前に、Reactだけで見た目を作る。
+
+`App.jsx` で用意するもの:
+- `useState` で入力値を管理
+- 仮の `todos` 配列を表示
+- `map()` で一覧を描画
+
+この段階では、まずボタンを押しても動かなくてよい。
+
+## 6-3. 一覧取得をつなぐ
+次に、画面表示時にAPIから一覧を取得する。
+
+やること:
+- `useEffect` で初回読み込み時に `GET /todos` を呼ぶ
+- 取得結果を `setTodos` で state に入れる
+
+確認:
+- サーバー側のデータが画面に表示される
+
+## 6-4. 追加処理をつなぐ
+入力欄と追加ボタンをAPIにつなぐ。
+
+やること:
+- 入力値を `title` として `POST /todos` に送る
+- 成功したら一覧に反映する
+- 入力欄を空に戻す
+
+ポイント:
+- 空文字送信はフロントでも防ぐ
+- サーバー側でも防ぐ
+
+## 6-5. 完了切り替えをつなぐ
+各ToDoの完了ボタンから `PATCH /todos/:id` を呼ぶ。
+
+やること:
+- 対象ToDoの `completed` を反転した値で送る
+- 成功したら一覧を更新する
+
+## 6-6. 削除処理をつなぐ
+削除ボタンから `DELETE /todos/:id` を呼ぶ。
+
+やること:
+- 指定したToDoを削除する
+- 成功したら画面からも消す
+
+---
+
+## 7. React実装時の状態設計
+最低限、次の state があれば進めやすい。
+
+```js
+const [todos, setTodos] = useState([]);
+const [inputValue, setInputValue] = useState("");
+```
+
+余裕があれば追加:
+
+```js
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState("");
 ```
 
 ---
 
-## 3. 実行方法（追加インストールなし）
-`file://` 直開きだと CORS で `app.js` が読めないことがあるため、ローカルHTTPサーバーで開く。
+## 8. 画面実装の分割案
+最初は `App.jsx` 1ファイルでもよいが、慣れてきたら分割すると見やすい。
 
-1. PowerShellで `react-cdn` に移動
-   `cd C:\Users\junya.ueno\Documents\work\js\react-cdn`
-2. 次のどちらかを実行
-   - Pythonがある場合: `python -m http.server 5500`
-   - Pythonがない場合: `npx serve -l 5500`
-3. ブラウザで `http://localhost:5500` を開く
-4. 変更したらブラウザをリロード
+### 分割例
 
-- CDN読み込みのためインターネット接続が必要（オフライン環境では動作しない）
+```txt
+react-app/src/
+  app/
+    App.jsx
+  components/
+    TodoForm.jsx
+    TodoItem.jsx
+    TodoList.jsx
+```
 
-### サーバーの閉じ方
-- サーバーを起動したターミナルで `Ctrl + C` を押す
-- `Terminate batch job (Y/N)?` と表示されたら `Y` を入力して Enter
-
-### なぜ閉じるのか
-- ポート（例: 5500）を占有し続け、次回起動時に競合しやすくなる
-- 不要なバックグラウンドプロセスが残り、PCリソースを使い続ける
-- 意図しない公開状態を避ける（セキュリティ・運用面）
+### 各コンポーネントの役割
+- `TodoForm.jsx`: 入力欄と追加ボタン
+- `TodoItem.jsx`: 1件分の表示
+- `TodoList.jsx`: 一覧表示
 
 ---
 
-# ==========================================
-# React 課題（CDN版）
-# ==========================================
+## 9. 詰まりやすいポイント
 
-## 【課題1】Props（コンポーネント分割）
-目的：親→子にデータを渡す
+### CORSエラーが出る
+- バックエンドで `cors()` を設定しているか確認する
 
-- `UserCard` コンポーネントを作る
-- propsで `name` と `coin` を受け取って表示する
-- Appの中で複数 `UserCard` を表示する
+### `req.body` が `undefined`
+- `app.use(express.json())` を書いているか確認する
 
-合格基準：
-- 2件以上の `UserCard` が表示される
-- 各カードで名前とcoinがprops由来で表示される
+### 一覧が表示されない
+- `GET /todos` のURLが正しいか確認する
+- React側の `fetch` 先が `http://localhost:3001/todos` になっているか確認する
 
----
+### 追加しても画面が変わらない
+- API成功後に `setTodos` しているか確認する
+- 再取得するか、追加結果を state に反映する
 
-## 【課題2】配列表示（map）
-目的：配列をReactで表示する
-
-- `users` 配列を用意する（例：`[{ id: 1, name: "Taro", coin: 100 }, ...]`）
-- `users.map(...)` でリスト表示する
-- `key={user.id}` を必ず付ける
-
-合格基準：
-- `users` の件数分だけUIが表示される
-- コンソールに key 警告が出ない
+### id比較がうまくいかない
+- `req.params.id` は文字列なので、数値に変換して比較する
 
 ---
 
-## 【課題3】条件付きレンダリング
-目的：ifっぽい表示切り替え
+## 10. 完成イメージ
+完成時にできていればOKなこと:
 
-- coinが100未満のユーザーに「⚠ coin不足」を表示
-- 100以上は何も表示しない
-
-合格基準：
-- coin 99以下のユーザーだけ警告が表示される
-- coin 100以上のユーザーには警告が表示されない
+- ページを開くとToDo一覧が見える
+- 入力して追加できる
+- 完了/未完了を切り替えられる
+- 不要なToDoを削除できる
 
 ---
 
-## 【課題4】フォーム（入力）
-目的：useStateで入力値を管理
+## 11. 余裕があれば次にやること
 
-- inputを1つ作る（ユーザー名入力）
-- 文字を入力すると画面にリアルタイム表示
-
-合格基準：
-- 入力中の文字列がstate経由で即時反映される
-
----
-
-## 【課題5】追加（配列を更新）
-目的：配列 state の更新
-
-- usersをstateで持つ（`useState`）
-- 「追加」ボタンで新しいユーザーを1件追加
-- 追加時は `setUsers([...users, newUser])`
-- `newUser` は以下ルールで作る
-  - `id`: 既存最大id + 1（`users` が空なら 1 から開始）
-  - `name`: input値を使用（空文字は追加しない）
-  - `coin`: 100 で固定（初期値）
-- 追加後は input を空文字に戻す（推奨）
-
-合格基準：
-- 空入力では追加されない
-- 追加のたびにidが重複しない
-- 追加後に一覧に即反映される
+### ステップアップ案
+1. JSONファイル保存に対応する
+2. 件数表示を付ける
+3. フィルター機能を付ける
+4. 締切日を追加する
+5. 優先度を追加する
+6. 編集機能を追加する
 
 ---
 
-## 【課題6】削除（イベントとstate更新）
-目的：特定要素の削除
+## 12. 制作の進め方の目安
+おすすめの進め方は次の通り。
 
-- 各ユーザー行に「削除」ボタン
-- clickでそのユーザーを消す（`filter` で更新）
+### 1日目
+- バックエンドの起動
+- `GET /todos` 実装
+- Reactで画面の見た目だけ作る
 
-合格基準：
-- クリックした行だけ削除される
-- 他の行は残る
+### 2日目
+- `POST /todos`
+- `PATCH /todos/:id`
+- `DELETE /todos/:id`
+
+### 3日目
+- ReactとAPI接続
+- 見た目調整
+- 動作確認
 
 ---
 
-# できたらチェック
-- [ ] Propsで表示できた
-- [ ] mapで一覧表示できた
-- [ ] keyの意味が分かった
-- [ ] useStateでフォーム管理できた
-- [ ] 追加/削除ができた
-- [ ] 課題5でid重複なし・空入力追加なしを満たした
+## 13. 最低限の完成ライン
+まずはここまでできれば十分。
 
+- Reactで一覧表示できる
+- Node.jsでAPIが動く
+- 追加、更新、削除ができる
+- フロントとバックがつながっている
 
+これは「初めてのバックエンド制作」としてかなり良い経験になる。
+
+---
+
+## 14. 実装チェックリスト
+- [ ] `todo-api` フォルダを作成した
+- [ ] `express` と `cors` をインストールした
+- [ ] `server.js` を作成した
+- [ ] `GET /todos` を作成した
+- [ ] `POST /todos` を作成した
+- [ ] `PATCH /todos/:id` を作成した
+- [ ] `DELETE /todos/:id` を作成した
+- [ ] Reactで入力欄を作成した
+- [ ] Reactで一覧表示を作成した
+- [ ] ReactからAPIを呼べた
+- [ ] 追加後に画面が更新される
+- [ ] 完了切り替えができる
+- [ ] 削除ができる
+
+---
+
+## 15. 次にやると良いこと
+手順書を見ながら実装を始めるときは、以下の順で進めると安定する。
+
+1. `todo-api/server.js` を作る
+2. `GET /todos` だけ先に完成させる
+3. Reactで一覧を表示する
+4. `POST /todos` を追加する
+5. 完了切り替えと削除を作る
+
+最初から完璧を目指さず、1機能ずつ完成させるのがコツ。
