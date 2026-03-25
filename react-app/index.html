@@ -1,0 +1,26 @@
+<!--
+  このファイルは、ブラウザで最初に開かれるHTMLです。
+  ただし、画面の中身をここへ直接たくさん書くのではなく、
+  React がこのHTMLの中に画面を差し込むための土台として使います。
+-->
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React App</title>
+  </head>
+  <body>
+    <!--
+      id="root" は、Reactの画面を表示するための差し込み口です。
+      この中に、あとで main.jsx から App が描画されます。
+    -->
+    <div id="root"></div>
+
+    <!--
+      main.jsx はReactアプリの開始地点です。
+      この1行を読むことで、Reactの処理が始まります。
+    -->
+    <script type="module" src="/src/app/main.jsx"></script>
+  </body>
+</html>
