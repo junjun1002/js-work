@@ -1,34 +1,69 @@
-/*
-  このファイルは、画面全体の親になるコンポーネントです。
-  Reactでは、画面を部品（コンポーネント）に分けて作っていきますが、
-  その一番大きな土台が App です。
+import React, { useEffect, useState } from "react";
 
-  課題で作る部品や表示内容は、
-  最終的にこの App から呼び出して画面に並べていくことになります。
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState("");
 
-  つまり、「このアプリで何を表示するか」を組み立てる中心のファイルです。
-*/
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
-import UserCard from '../features/users/components/UserCard';
+  const fetchTodos = async () => {
+    const response = await fetch("http://localhost:3001/todos");
+    const data = await response.json();
+    setTodos(data);
+  };
 
-const users = [
-  {id: 1, name: 'Taro', coin: 100},
-  {id: 2, name: 'Hanako', coin: 300},
-];
+  const handleAddTodo = async () => {
+    if (!inputValue.trim()) {
+      return;
+    }
 
-export default function App() {
+    const response = await fetch("http://localhost:3001/todos", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: inputValue
+      })
+    });
+
+    const newTodo = await response.json();
+
+    setTodos([...todos, newTodo]);
+    setInputValue("");
+  };
+
   return (
-    <main>
-      {/* 画面の見出し */}
-      <h1>React App</h1>
+    <main style={{ padding: "24px", fontFamily: "sans-serif" }}>
+      <h1>ToDoアプリ</h1>
 
-      {/* 最初の説明文 */}
-      <p>Start building from this scaffold.</p>
+      <div style={{ marginBottom: "16px" }}>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+          placeholder="やることを入力"
+        />
+        <button onClick={handleAddTodo} style={{ marginLeft: "8px" }}>
+        追加
+        </button>
+      </div>
 
-      {/* ユーザーカードを表示するためのコンポーネントを呼び出す */}
-      {users.map(user => (
-        <UserCard key={user.id} name={user.name} coin={user.coin} />
-      ))}
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id} style={{ marginBottom: "8px" }}>
+            <span>
+              {todo.completed ? "完了" : "未完了"} / {todo.title}
+            </span>
+            <button style={{ marginLeft: "8px" }}>切り替え</button>
+            <button style={{ marginLeft: "8px" }}>削除</button>
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }
+
+export default App;

@@ -1,4 +1,4 @@
-# ==========================================
+﻿# ==========================================
 # ToDoアプリ 実装手順書
 # React + JavaScript + Node.js 初学者向け
 # ==========================================
@@ -404,20 +404,7 @@ app.post("/todos", (req, res) => {
 `server.js` に次を追加する。
 
 ```js
-app.patch("/todos/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const completed = req.body.completed;
-
-  const todo = todos.find((item) => item.id === id);
-
-  if (!todo) {
-    return res.status(404).json({ message: "todo not found" });
-  }
-
-  todo.completed = completed;
-
-  res.json(todo);
-});
+ 
 ```
 
 ### このコードの意味
